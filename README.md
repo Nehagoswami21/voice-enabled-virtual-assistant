@@ -1,136 +1,150 @@
-# Voice-Enabled Virtual Assistant Dashboard
+# 🎙️ Voice-Enabled Virtual Assistant Dashboard
 
-A complete voice assistant dashboard built with Django REST Framework and React, optimized for free resources.
+> A full-stack voice assistant with real-time speech recognition, text-to-speech responses, WebSocket communication, and a React dashboard — built entirely on free, offline-capable tools.
 
-## Features
+![Django](https://img.shields.io/badge/Django-4.2-092E20?logo=django) ![React](https://img.shields.io/badge/React-18-61DAFB?logo=react) ![WebSocket](https://img.shields.io/badge/WebSocket-Django_Channels-orange) ![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker) ![Vosk](https://img.shields.io/badge/Vosk-Offline_STT-blueviolet)
 
-- 🎤 Voice recording and processing
-- 🗣️ Text-to-speech responses
-- 📊 Interactive dashboard
-- 📝 Command history and logs
-- ⚙️ Configurable assistant profiles
-- 🔐 Token-based authentication
-- 🔄 Real-time WebSocket communication
+---
 
-## Tech Stack
+## 💡 What Makes This Special
 
-- **Backend**: Django REST Framework, Vosk (speech recognition), gTTS (text-to-speech)
-- **Frontend**: React, Material UI
-- **Database**: SQLite (development) / PostgreSQL (production)
-- **Real-time**: Django Channels + Redis
-- **Containerization**: Docker + Docker Compose
+No paid APIs. No cloud dependency. This assistant runs **fully offline** using Vosk for speech recognition and gTTS for responses. The Django Channels + Redis WebSocket layer gives it real-time feel, and the React dashboard shows live command history and assistant profiles.
 
-## Quick Start
+---
 
-### Prerequisites
-- Docker and Docker Compose
-- Microphone access for voice recording
+## ✨ Features
 
-### Setup
+| Feature | Description |
+|---------|-------------|
+| 🎤 Voice Recording | Browser-based audio capture |
+| 🧠 Speech Recognition | Vosk offline STT — no API costs |
+| 🔊 Text-to-Speech | gTTS responses played back in browser |
+| ⚡ Real-time | Django Channels + Redis WebSocket |
+| 📊 Dashboard | Command history, logs, assistant profiles |
+| 🔐 Auth | Token-based authentication |
+| 🐳 Docker Ready | Full containerized stack |
 
-1. **Clone and start services**:
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|-------|-----------|
+| Backend | Python, Django REST Framework, Django Channels |
+| Frontend | React 18, Material UI |
+| Speech-to-Text | Vosk (offline, free) |
+| Text-to-Speech | gTTS (Google TTS, free) |
+| Real-time | Django Channels + Redis |
+| Database | SQLite (dev) / PostgreSQL (prod) |
+| DevOps | Docker, Docker Compose |
+
+---
+
+## 📁 Project Structure
+
+```
+voice-enabled-virtual-assistant/
+├── backend/
+│   ├── assistant_project/
+│   │   ├── settings.py         # Django config + Channels setup
+│   │   ├── urls.py
+│   │   └── asgi.py             # ASGI for WebSocket support
+│   ├── voice_app/
+│   │   ├── consumers.py        # WebSocket consumer
+│   │   ├── voice_processor.py  # Vosk STT + command engine
+│   │   ├── views.py            # REST API views
+│   │   ├── models.py           # Command logs, profiles
+│   │   └── serializers.py
+│   └── requirements.txt
+├── frontend/
+│   └── src/
+│       ├── components/
+│       │   ├── VoiceRecorder.js    # Audio capture + WebSocket
+│       │   ├── Dashboard.js        # Command history UI
+│       │   └── Login.js
+│       └── services/api.js
+├── docker-compose.yml
+└── .env.example
+```
+
+---
+
+## ⚙️ Setup
+
+### Option 1 — Docker (Recommended)
 ```bash
+git clone https://github.com/Nehagoswami21/voice-enabled-virtual-assistant.git
+cd voice-enabled-virtual-assistant
 docker-compose up --build
 ```
 
-2. **Setup Django (in another terminal)**:
+Then in a second terminal:
 ```bash
 docker-compose exec backend python manage.py migrate
 docker-compose exec backend python manage.py createsuperuser
 ```
 
-3. **Access the application**:
-- Frontend: http://localhost:3000
-- Backend API: http://localhost:8000/api/
-- Admin: http://localhost:8000/admin/
+### Option 2 — Manual
 
-### Usage
-
-1. **Login** with your created superuser credentials
-2. **Click "Start Recording"** to record voice commands
-3. **Speak naturally** - try commands like:
-   - "What time is it?"
-   - "Hello"
-   - "Help"
-4. **View responses** in the dashboard
-5. **Check history** in the Recent Commands panel
-
-## API Endpoints
-
-- `POST /api/auth/token/` - Get authentication token
-- `GET /api/commands/` - List voice commands
-- `POST /api/commands/process_audio/` - Process audio file
-- `GET /api/profile/` - Get assistant profile
-- `GET /api/logs/` - Get command logs
-
-## Development
-
-### Backend Development
+**Backend:**
 ```bash
 cd backend
 pip install -r requirements.txt
+python manage.py migrate
 python manage.py runserver
 ```
 
-### Frontend Development
+**Frontend:**
 ```bash
 cd frontend
 npm install
 npm start
 ```
 
-### Adding New Commands
+| Service | URL |
+|---------|-----|
+| Frontend | http://localhost:3000 |
+| Backend API | http://localhost:8000/api/ |
+| Django Admin | http://localhost:8000/admin/ |
 
-Edit `backend/voice_app/voice_processor.py` and add to the `AssistantEngine.commands` dictionary:
+---
 
-```python
-def my_command(self, text):
-    return "Custom response"
+## 📡 API Reference
 
-# Add to __init__:
-self.commands['keyword'] = self.my_command
-```
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/token/` | Get auth token |
+| GET | `/api/commands/` | List voice commands |
+| POST | `/api/commands/process_audio/` | Process audio file |
+| GET | `/api/profile/` | Get assistant profile |
+| GET | `/api/logs/` | Command history |
+| WS | `ws://localhost:8000/ws/voice/` | Real-time voice stream |
 
-## Production Deployment
+---
 
-1. **Update settings** for production:
-   - Change `SECRET_KEY` in settings.py
-   - Set `DEBUG = False`
-   - Configure PostgreSQL database
-   - Set proper CORS settings
+## 🗣️ Supported Voice Commands
 
-2. **Environment variables**:
-```bash
-export DATABASE_URL=postgresql://user:pass@localhost/dbname
-export DEBUG=False
-export SECRET_KEY=your-secret-key
-```
+| Command | Response |
+|---------|----------|
+| "What time is it?" | Current time |
+| "Hello" | Greeting response |
+| "Help" | Lists available commands |
+| "What's the date?" | Current date |
 
-## Free Resource Optimization
+> Extend commands in `voice_app/voice_processor.py`
 
-- **Vosk**: Offline speech recognition (no API costs)
-- **gTTS**: Free Google Text-to-Speech
-- **SQLite**: No database hosting costs for development
-- **Local processing**: No external AI API calls required
+---
 
-## Troubleshooting
+## 💰 Why It's Free
 
-### Audio Issues
-- Ensure microphone permissions are granted
-- Check browser compatibility (Chrome/Firefox recommended)
-- Verify audio format support
+| Component | Alternative | Cost |
+|-----------|-------------|------|
+| Vosk STT | Google Speech API | $0 vs $0.006/15sec |
+| gTTS | Amazon Polly | $0 vs $4/1M chars |
+| SQLite | Managed DB | $0 vs $15+/mo |
 
-### Docker Issues
-```bash
-docker-compose down -v
-docker-compose up --build
-```
+---
 
-### Database Issues
-```bash
-docker-compose exec backend python manage.py migrate --run-syncdb
-```
+## 📄 License
 
-## License
-
-MIT License - feel free to use for personal and commercial projects.
+MIT
